@@ -34,13 +34,13 @@ export default class PCNewsContainer extends React.Component {
                         </div>
                         <Tabs class="tab_news">
                             <TabPane tab="热点" key="1">
-                                <PCNewsBlock count={24} type="top" width="100%" bordered="false"></PCNewsBlock>
+                                <PCNewsBlock count={20} type="top" width="100%" bordered="false"></PCNewsBlock>
                             </TabPane>
                             <TabPane tab="社会" key="2">
-                                <PCNewsBlock count={24} type="shehui" width="100%" bordered="false"></PCNewsBlock>
+                                <PCNewsBlock count={20} type="shehui" width="100%" bordered="false"></PCNewsBlock>
                             </TabPane>
                             <TabPane tab="国际" key="3">
-                                <PCNewsBlock count={24} type="top" width="100%" bordered="false"></PCNewsBlock>
+                                <PCNewsBlock count={20} type="top" width="100%" bordered="false"></PCNewsBlock>
                             </TabPane>
                         </Tabs>
                         <Tabs>
@@ -54,8 +54,8 @@ export default class PCNewsContainer extends React.Component {
                 <Row>
                     <Col span={2}></Col>
                     <Col span={20} class="imageBlock">
-                        <PCImageBlock count={10} type="guonei" width="100%" cardTitle="国内新闻" imageWidth="132px"></PCImageBlock>
-                        <PCImageBlock count={10} type="yule" width="100%" cardTitle="娱乐新闻" imageWidth="132px"></PCImageBlock>
+                        <PCImageBlock count={9} type="guonei" width="100%" cardTitle="国内新闻" imageWidth="132px"></PCImageBlock>
+                        <PCImageBlock count={9} type="yule" width="100%" cardTitle="娱乐新闻" imageWidth="132px"></PCImageBlock>
                     </Col>
                     <Col span={2}></Col>
                 </Row>

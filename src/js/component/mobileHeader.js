@@ -11,17 +11,21 @@ class MobileHeader extends React.Component {
 		super()
 		this.state = {
 			current: 'hot',
-			modalShow: false,
-			action: 'login',
+			modalVisible: false,
+			action: 'register',
 			hasLogined: false,
-			userName: '',
-			userid: 0
+			userNickName: ''
 		}
 	}
-
-	setModalShow(value){
+	componentWillMount() {
+		if (localStorage.userid != '') {
+			this.setState({hasLogined: true});
+			this.setState({userNickName: localStorage.userNickName, userid: localStorage.userid});
+		}
+	}
+	setModalVisible(value){
 		this.setState({
-			modalShow:value
+			modalVisible:value
 		})
 	}
 
@@ -30,7 +34,7 @@ class MobileHeader extends React.Component {
 			this.setState({
 				current:'register'
 			})
-			this.setModalShow(true)
+			this.setModalVisible(true)
 		} else {
 			this.setState({
 				current:e.key
@@ -38,44 +42,84 @@ class MobileHeader extends React.Component {
 		}
 	}
 
-	handleSubmit(e){
-		//向API提交数据
-		e.preventDefault()
+	handleSubmit(e)
+	{
+		//页面开始向 API 进行提交数据
+		e.preventDefault();
 		var myFetchOptions = {
-			method:'GET',
+			method: 'GET'
+		};
+		var formData = this.props.form.getFieldsValue();
+		fetch("http://newsapi.gugujiankong.com/Handler.ashx?action=" + this.state.action
+		+ "&username="+formData.userName+"&password="+formData.password
+		+"&r_userName=" + formData.r_userName + "&r_password="
+		+ formData.r_password + "&r_confirmPassword="
+		+ formData.r_confirmPassword, myFetchOptions)
+		.then(response => response.json())
+		.then(json => {
+			this.setState({userNickName: json.NickUserName, userid: json.UserId});
+			localStorage.userid= json.UserId;
+			localStorage.userNickName = json.NickUserName;
+			this.setState({hasLogined:true});
+		})
+		.then(()=>{
+			if (this.state.action =="register") {
+				console.log(this.state.action)
+				fetch(`http://newsapi.gugujiankong.com/Handler.ashx?action=login&username=${formData.r_userName}&password=${formData.r_password}`, myFetchOptions)
+				.then(response => response.json())
+				.then(json => {
+					console.log(json)
+					this.setState({userNickName: json.NickUserName, userid: json.UserId});
+					localStorage.userid= json.UserId;
+					localStorage.userNickName = json.NickUserName;
+				})
+			}
+		})
+		message.success("请求成功！");
+		this.setModalVisible(false);
+	}
+	
+	login(){
+		this.setModalVisible(true)
+	}
+	callback(key) {
+		if (key == 1) {
+			this.setState({action: 'login'});
+		} else if (key == 2) {
+			this.setState({action: 'register'});
 		}
-		var formData = this.props.form.getFieldsValue()
-		fetch(`http://newsapi.gugujiankong.com/Handler.ashx?action=${this.state.action}&username=${formData.userName}&password=${formData.password
-		}&r_userName=${formData.r_userName}&r_password=${formData.r_password}&r_confirmPassword=${formData.r_confirmPassword}`, myFetchOptions)
-
-		message.success("请求成功")
-		this.setModalShow(false)
 	}
 
-	login(){
-		this.setModalShow(true)
+	logout(){
+		localStorage.userid= '';
+		localStorage.userNickName = '';
+		this.setState({hasLogined:false});
 	}
 
 	render(){
 		let {getFieldDecorator} = this.props.form
 		const userShow = this.state.hasLogined?
-		<Link to={'/usercenter'}>
-			<Icon type="inbox" />
-		</Link>
+		<div>	
+			<Link to={'/usercenter'}>
+				<Icon type="inbox" />
+			</Link>
+			    <Icon type="logout" onClick={this.logout.bind(this)}/>
+		</div>
 		:
 		<Icon type="setting" onClick={this.login.bind(this)} />;
 
 		return (
             <div id="mobileheader">
                 <header>
-                    <img src="./src/images/logo.png" alt="logo"/>
+					<a href=""> 
+						<img src="./src/images/logo.png" alt="logo"/></a>
                     <span>ReactNews</span>
 					{userShow}
                 </header>
 
-				<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalShow} onCancel={()=>this.setModalShow(false)} onOk={()=>this.setModalShow(false)} okText="关闭">
+				<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel={()=>this.setModalVisible(false)} onOk={()=>this.setModalVisible(false)} okText="关闭">
 					<Tabs type="card">
-						<TabPane tab="注册" key="1">
+						<TabPane tab="注册" key="2">
 							<Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
 								<FormItem label="账户">
 									 {getFieldDecorator('r_userName', {
@@ -89,7 +133,7 @@ class MobileHeader extends React.Component {
 								</FormItem>
 								<FormItem label="密码">
 									{
-										getFieldDecorator('r_passWord',{
+										getFieldDecorator('r_password',{
 											rules:[{
 												required:true,
 												message:'请输入您的密码',
@@ -101,7 +145,7 @@ class MobileHeader extends React.Component {
 								</FormItem>
 								<FormItem label="确认密码">
 									{
-										getFieldDecorator('r_confirmPassWord',{
+										getFieldDecorator('r_confirmPassword',{
 											rules:[{
 												required:true,
 												message:'请输入您的密码',
@@ -114,7 +158,7 @@ class MobileHeader extends React.Component {
 								<Button type="primary" htmlType="submit">注册</Button>
 							</Form>
 						</TabPane>
-						{/* <TabPane  tab="登陆" key="2">
+						<TabPane  tab="登陆" key="1">
 							<Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
 								<FormItem label="账户">
 									<Input placeholder="请输入您的账户名" {...getFieldDecorator('l_userName')} />
@@ -124,7 +168,7 @@ class MobileHeader extends React.Component {
 								</FormItem>
 								<Button type="primary" htmlType="submit">登陆</Button>
 							</Form>
-						</TabPane> */}
+						</TabPane>
 					</Tabs>
 				</Modal>
             </div>

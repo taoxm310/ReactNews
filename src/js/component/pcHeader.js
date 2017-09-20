@@ -21,12 +21,12 @@ class PCHeader extends React.Component {
 			this.setState({hasLogined:true});
 			this.setState({userNickName:localStorage.userNickName,userid:localStorage.userid});
 		}
-	};
+	}
 
 	setModalVisible(value)
 	{
 		this.setState({modalVisible: value});
-	};
+	}
 	handleClick(e) {
 
 		if (e.key == "register") {
@@ -35,7 +35,7 @@ class PCHeader extends React.Component {
 		} else {
 				this.setState({current: e.key});
 		}
-	};
+	}
 	handleSubmit(e)
 	{
 		//页面开始向 API 进行提交数据
@@ -71,19 +71,19 @@ class PCHeader extends React.Component {
 		})
 		message.success("请求成功！");
 		this.setModalVisible(false);
-	};
+	}
 	callback(key) {
 		if (key == 1) {
 			this.setState({action: 'login'});
 		} else if (key == 2) {
 			this.setState({action: 'register'});
 		}
-	};
+	}
 	logout(){
 		localStorage.userid= '';
 		localStorage.userNickName = '';
 		this.setState({hasLogined:false});
-	};
+	}
 	render(){
 		let {getFieldDecorator} = this.props.form
 
@@ -175,10 +175,10 @@ class PCHeader extends React.Component {
 										getFieldDecorator('r_confirmPassword',{
 											rules:[{
 												required:true,
-												message:'邮箱',
+												message:'确认密码',
 											}]
 										})(
-											<Input type="text" placeholder="请输入您的邮箱" />
+											<Input type="text" placeholder="请再次输入您的密码" />
 										)
 									}
 								</FormItem>

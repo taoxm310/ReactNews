@@ -16,10 +16,14 @@ html{
 }
 
 #mobileheader header span {
-	font-size:35px;
+	font-size:30px;
 	vertical-align:top;
 	padding-left:10px;
 	color: #2db7f5;
+}
+#mobileheader header div {
+  display:inline-block;
+  float:right;
 }
 #mobileheader i {
 	font-size:0.5rem;
